@@ -101,7 +101,7 @@ dependencies {
     implementation(libs.lifecycle.service)
 
     implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
+    kapt(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
     implementation(libs.hilt.work)
 

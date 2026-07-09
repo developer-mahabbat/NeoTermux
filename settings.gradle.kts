@@ -30,6 +30,3 @@ include(":sshclient")
 include(":gitlib")
 include(":terminal-emulator")
 
-gradle.beforeSettings {
-    includeBuild("build-logic")
-}

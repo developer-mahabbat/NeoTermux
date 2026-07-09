@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.hilt)
+    id("org.jetbrains.kotlin.kapt")
 }
 
 android {
@@ -21,5 +22,5 @@ dependencies {
     implementation(libs.bouncycastle)
     implementation(libs.coroutines.core)
     implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
+    kapt(libs.hilt.compiler)
 }

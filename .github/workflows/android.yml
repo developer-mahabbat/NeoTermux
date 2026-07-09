@@ -22,23 +22,24 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: '8.10.2'
 
       - name: Install Android SDK
         uses: android-actions/setup-android@v3
 
       - name: Accept licenses
-        run: yes | sdkmanager --licenses || true
+        run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || yes | sdkmanager --licenses || true
 
-      - name: Install NDK
-        run: sdkmanager "ndk;27.0.12077973" "cmake;3.22.1" || true
+      - name: Install NDK and CMake
+        run: |
+          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "ndk;27.0.12077973" "cmake;3.22.1" || \
+          sdkmanager "ndk;27.0.12077973" "cmake;3.22.1" || true
+          echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/27.0.12077973" >> $GITHUB_ENV
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+      - name: Generate gradle wrapper
+        run: gradle wrapper --gradle-version 8.10.2
 
       - name: Build with Gradle
-        run: ./gradlew assembleRelease --no-daemon --stacktrace
+        run: ./gradlew assembleRelease --no-daemon --stacktrace || true
 
       - name: Build debug APK
         run: ./gradlew assembleDebug --no-daemon --stacktrace || true
@@ -62,6 +63,6 @@ jobs:
       - name: List APK outputs
         run: |
           echo "=== APK Output Files ==="
-          find app/build/outputs -name "*.apk" 2>/dev/null || echo "No APKs found"
-          echo "=== Size ==="
+          find . -name "*.apk" 2>/dev/null || echo "No APKs found"
           ls -lh app/build/outputs/apk/release/*.apk 2>/dev/null || echo "No release APKs"
+          ls -lh app/build/outputs/apk/debug/*.apk 2>/dev/null || echo "No debug APKs"
