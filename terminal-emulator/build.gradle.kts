@@ -8,18 +8,6 @@ android {
     compileSdk = 34
     defaultConfig {
         minSdk = 26
-        externalNativeBuild {
-            cmake {
-                arguments("-DCMAKE_CXX_FLAGS=-O3 -fvisibility=hidden")
-                abiFilters("arm64-v8a", "armeabi-v7a", "x86_64", "x86")
-            }
-        }
-    }
-    externalNativeBuild {
-        cmake {
-            path = file("src/main/cpp/CMakeLists.txt")
-            version = "3.22.1"
-        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
