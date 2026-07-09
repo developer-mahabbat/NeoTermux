@@ -27,7 +27,7 @@ class TerminalService : Service() {
         val notification = NotificationCompat.Builder(this, channelId)
             .setContentTitle("NeoTermux")
             .setContentText("Terminal session running")
-            .setSmallIcon(android.R.drawable.ic_menu_terminal)
+            .setSmallIcon(android.R.drawable.ic_menu_view)
             .setOngoing(true)
             .build()
         startForeground(1, notification)
