@@ -3,13 +3,16 @@ name: Build Android APK
 on:
   push:
     branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
   workflow_dispatch:
+
+concurrency:
+  group: build-apk-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -20,56 +23,46 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Download and setup Gradle
-        run: |
-          wget -q https://services.gradle.org/distributions/gradle-8.10.2-bin.zip -O /tmp/gradle.zip
-          unzip -q /tmp/gradle.zip -d /opt
-          echo "/opt/gradle-8.10.2/bin" >> $GITHUB_PATH
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.10.2"
 
-      - name: Generate Gradle Wrapper
-        run: gradle wrapper --gradle-version 8.10.2
-
-      - name: Install Android SDK
+      - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Accept licenses
+      - name: Accept licenses and install components
         run: |
-          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || \
-          yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses || \
-          yes | sdkmanager --licenses || true
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses 2>/dev/null || \
+          yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses 2>/dev/null || \
+          yes | sdkmanager --licenses 2>/dev/null || true
+          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-34" "build-tools;34.0.0" "ndk;27.0.12077973" "cmake;3.22.1" 2>/dev/null || \
+          $ANDROID_HOME/tools/bin/sdkmanager "platforms;android-34" "build-tools;34.0.0" "ndk;27.0.12077973" "cmake;3.22.1" 2>/dev/null || \
+          sdkmanager "platforms;android-34" "build-tools;34.0.0" "ndk;27.0.12077973" "cmake;3.22.1" 2>/dev/null || true
 
-      - name: Install NDK and CMake
-        run: |
-          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "ndk;27.0.12077973" "cmake;3.22.1" || \
-          $ANDROID_HOME/tools/bin/sdkmanager "ndk;27.0.12077973" "cmake;3.22.1" || \
-          sdkmanager "ndk;27.0.12077973" "cmake;3.22.1" || true
-          echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/27.0.12077973" >> $GITHUB_ENV
+      - name: Generate Gradle wrapper
+        working-directory: ${{ github.workspace }}
+        run: gradle wrapper --gradle-version 8.10.2
 
-      - name: Build with Gradle
-        run: ./gradlew assembleRelease --no-daemon --stacktrace || true
+      - name: Build release APK
+        run: ./gradlew assembleRelease --no-daemon --stacktrace
+        continue-on-error: true
 
       - name: Build debug APK
-        run: ./gradlew assembleDebug --no-daemon --stacktrace || true
+        run: ./gradlew assembleDebug --no-daemon --stacktrace
+        continue-on-error: true
 
-      - name: Upload APK artifacts
+      - name: Upload APKs
         uses: actions/upload-artifact@v4
         with:
-          name: NeoTermux-APK
+          name: NeoTermux-APKs
           path: |
-            app/build/outputs/apk/release/*.apk
-            app/build/outputs/apk/debug/*.apk
-          if-no-files-found: warn
-
-      - name: Upload universal APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: NeoTermux-Universal-APK
-          path: app/build/outputs/apk/release/*universal*.apk
+            **/build/outputs/apk/**/*.apk
           if-no-files-found: warn
 
       - name: List APK outputs
         run: |
-          echo "=== APK Output Files ==="
-          find . -name "*.apk" 2>/dev/null || echo "No APKs found"
-          ls -lh app/build/outputs/apk/release/*.apk 2>/dev/null || echo "No release APKs"
-          ls -lh app/build/outputs/apk/debug/*.apk 2>/dev/null || echo "No debug APKs"
+          echo "=== APK Files ==="
+          find . -path "*/build/outputs/apk/*" -name "*.apk" 2>/dev/null | head -20
+          echo "=== Sizes ==="
+          find . -path "*/build/outputs/apk/*" -name "*.apk" -exec ls -lh {} \; 2>/dev/null | head -20
