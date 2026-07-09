@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.neotermux.git"
-    compileSdk = 35
+    compileSdk = 34
     defaultConfig { minSdk = 26 }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17

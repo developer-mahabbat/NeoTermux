@@ -5,55 +5,51 @@ on:
     branches: [ main, master ]
   workflow_dispatch:
 
-concurrency:
-  group: build-apk-${{ github.ref }}
-  cancel-in-progress: false
-
 jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
-          distribution: 'temurin'
+          java-version: 17
+          distribution: temurin
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Accept licenses and install components
+      - name: Download Android SDK
         run: |
-          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "platforms;android-35" "build-tools;35.0.0" "ndk;27.0.12077973" "cmake;3.22.1" 2>&1 || \
-          $ANDROID_HOME/tools/bin/sdkmanager --install "platforms;android-35" "build-tools;35.0.0" "ndk;27.0.12077973" "cmake;3.22.1" 2>&1 || \
-          sdkmanager --install "platforms;android-35" "build-tools;35.0.0" "ndk;27.0.12077973" "cmake;3.22.1" 2>&1 || true
-          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses 2>&1 || \
-          yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses 2>&1 || \
-          yes | sdkmanager --licenses 2>&1 || true
+          wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O /tmp/cmdline-tools.zip
+          unzip -q /tmp/cmdline-tools.zip -d /opt/android-sdk
+          mkdir -p /opt/android-sdk/cmdline-tools/latest
+          mv /opt/android-sdk/cmdline-tools/* /opt/android-sdk/cmdline-tools/latest/ 2>/dev/null || true
+          echo "ANDROID_HOME=/opt/android-sdk" >> $GITHUB_ENV
+          echo "/opt/android-sdk/cmdline-tools/latest/bin" >> $GITHUB_PATH
 
-      - name: Build release APK
-        run: ./gradlew assembleRelease --no-daemon --stacktrace
-        continue-on-error: true
+      - name: Install SDK packages
+        run: |
+          /opt/android-sdk/cmdline-tools/latest/bin/sdkmanager --sdk_root=/opt/android-sdk "platforms;android-35" "build-tools;35.0.0" "ndk;27.0.12077973" "cmake;3.22.1" 2>&1
+          yes | /opt/android-sdk/cmdline-tools/latest/bin/sdkmanager --sdk_root=/opt/android-sdk --licenses 2>&1 || true
+
+      - name: Make gradlew executable
+        run: chmod +x gradlew
 
       - name: Build debug APK
-        run: ./gradlew assembleDebug --no-daemon --stacktrace
-        continue-on-error: true
+        run: |
+          ./gradlew assembleDebug --no-daemon --stacktrace 2>&1
+        env:
+          ANDROID_HOME: /opt/android-sdk
+
+      - name: List artifacts
+        if: always()
+        run: find . -name "*.apk" -exec ls -lh {} \; 2>/dev/null || echo "No APKs"
 
       - name: Upload APKs
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: NeoTermux-APKs
-          path: |
-            **/build/outputs/apk/**/*.apk
+          path: "**/build/outputs/apk/**/*.apk"
           if-no-files-found: warn
-
-      - name: List APK outputs
-        run: |
-          echo "=== APK Files ==="
-          find . -path "*/build/outputs/apk/*" -name "*.apk" 2>/dev/null | head -20
-          echo "=== Sizes ==="
-          find . -path "*/build/outputs/apk/*" -name "*.apk" -exec ls -lh {} \; 2>/dev/null | head -20
