@@ -1,8 +1,6 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.hilt)
-    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -12,7 +10,7 @@ android {
         minSdk = 26
         externalNativeBuild {
             cmake {
-                cppFlags += listOf("-O3", "-DUNIX", "-DANDROID")
+                arguments("-DCMAKE_CXX_FLAGS=-O3 -DUNIX -DANDROID")
                 abiFilters("arm64-v8a", "armeabi-v7a", "x86_64", "x86")
             }
         }
