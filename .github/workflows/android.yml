@@ -37,7 +37,9 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build debug APK
-        run: ./gradlew assembleDebug --no-daemon --stacktrace 2>&1
+        run: |
+          unset ANDROID_SDK_ROOT
+          ./gradlew assembleDebug --no-daemon --stacktrace 2>&1
         env:
           ANDROID_HOME: /opt/android-sdk
 
