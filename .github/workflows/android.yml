@@ -30,15 +30,14 @@ jobs:
 
       - name: Install SDK packages
         run: |
-          /opt/android-sdk/cmdline-tools/latest/bin/sdkmanager --sdk_root=/opt/android-sdk "platforms;android-35" "build-tools;35.0.0" "ndk;27.0.12077973" "cmake;3.22.1" 2>&1
+          /opt/android-sdk/cmdline-tools/latest/bin/sdkmanager --sdk_root=/opt/android-sdk "platforms;android-34" "build-tools;34.0.0" "ndk;27.0.12077973" "cmake;3.22.1" 2>&1
           yes | /opt/android-sdk/cmdline-tools/latest/bin/sdkmanager --sdk_root=/opt/android-sdk --licenses 2>&1 || true
 
       - name: Make gradlew executable
         run: chmod +x gradlew
 
       - name: Build debug APK
-        run: |
-          ./gradlew assembleDebug --no-daemon --stacktrace 2>&1
+        run: ./gradlew assembleDebug --no-daemon --stacktrace 2>&1
         env:
           ANDROID_HOME: /opt/android-sdk
 
