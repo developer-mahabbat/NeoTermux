@@ -23,26 +23,17 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: "8.10.2"
-
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
       - name: Accept licenses and install components
         run: |
-          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses 2>/dev/null || \
-          yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses 2>/dev/null || \
-          yes | sdkmanager --licenses 2>/dev/null || true
-          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-34" "build-tools;34.0.0" "ndk;27.0.12077973" "cmake;3.22.1" 2>/dev/null || \
-          $ANDROID_HOME/tools/bin/sdkmanager "platforms;android-34" "build-tools;34.0.0" "ndk;27.0.12077973" "cmake;3.22.1" 2>/dev/null || \
-          sdkmanager "platforms;android-34" "build-tools;34.0.0" "ndk;27.0.12077973" "cmake;3.22.1" 2>/dev/null || true
-
-      - name: Generate Gradle wrapper
-        working-directory: ${{ github.workspace }}
-        run: gradle wrapper --gradle-version 8.10.2
+          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "platforms;android-35" "build-tools;35.0.0" "ndk;27.0.12077973" "cmake;3.22.1" 2>&1 || \
+          $ANDROID_HOME/tools/bin/sdkmanager --install "platforms;android-35" "build-tools;35.0.0" "ndk;27.0.12077973" "cmake;3.22.1" 2>&1 || \
+          sdkmanager --install "platforms;android-35" "build-tools;35.0.0" "ndk;27.0.12077973" "cmake;3.22.1" 2>&1 || true
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses 2>&1 || \
+          yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses 2>&1 || \
+          yes | sdkmanager --licenses 2>&1 || true
 
       - name: Build release APK
         run: ./gradlew assembleRelease --no-daemon --stacktrace
