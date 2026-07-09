@@ -12,7 +12,7 @@ extern char *terminal_get_buffer(int *out_len);
 extern void terminal_destroy();
 extern int pty_open(const char *shell_path, char *const env[], const char *term_env, void (*callback)(const char *, int));
 extern int pty_write(const char *data, int len);
-extern int pty_resize_window_size(int rows, int cols);
+extern int pty_set_window_size(int rows, int cols);
 extern void pty_close();
 extern int pty_is_running();
 
@@ -98,7 +98,7 @@ Java_com_neotermux_termlib_PtyNative_write(JNIEnv *env, jobject thiz, jbyteArray
 JNIEXPORT void JNICALL
 Java_com_neotermux_termlib_PtyNative_resizeWindow(JNIEnv *env, jobject thiz,
                                                   jint rows, jint cols) {
-    pty_resize_window_size(rows, cols);
+    pty_set_window_size(rows, cols);
 }
 
 JNIEXPORT void JNICALL
