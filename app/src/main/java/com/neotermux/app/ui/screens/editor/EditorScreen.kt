@@ -88,7 +88,7 @@ fun EditorScreen(
 
                 // Editor content
                 Box(modifier = Modifier.weight(1f).horizontalScroll(rememberScrollState())) {
-                    BasicTextField(
+                    TextField(
                         value = state.content,
                         onValueChange = { viewModel.updateContent(it) },
                         textStyle = TextStyle(
@@ -96,16 +96,14 @@ fun EditorScreen(
                             fontSize = 14.sp,
                             fontFamily = FontFamily.Monospace,
                         ),
-                        cursorBrush = androidx.compose.ui.graphics.SolidColor(Color(0xFF8AB4F8)),
                         modifier = Modifier.fillMaxSize().padding(8.dp),
-                        decorationBox = { innerTextField ->
-                            Box {
-                                if (state.content.isEmpty()) {
-                                    Text("Start typing...", color = Color(0xFF5A5A5A), fontSize = 14.sp, fontFamily = FontFamily.Monospace)
-                                }
-                                innerTextField()
-                            }
-                        }
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            cursorColor = Color(0xFF8AB4F8)
+                        )
                     )
                 }
 

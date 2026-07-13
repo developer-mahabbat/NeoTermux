@@ -91,10 +91,10 @@ fun FileManagerScreen(
                         contentPadding = PaddingValues(horizontal = 4.dp, vertical = 0.dp),
                         modifier = Modifier.height(28.dp)
                     ) {
-                        Text(segment, fontSize = 12.sp, color = if (index == state.pathSegments.size - 1)
+                        Text(segment, fontSize = 12.sp, color = if (index == state.currentSegments.size - 1)
                             MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant)
                     }
-                    if (index < state.pathSegments.size - 1) {
+                    if (index < state.currentSegments.size - 1) {
                         Icon(Icons.Default.ChevronRight, "", modifier = Modifier.size(14.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }

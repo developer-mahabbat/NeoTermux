@@ -73,7 +73,7 @@ private fun StatusTab(state: GitState, viewModel: GitViewModel) {
             Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f))) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Default.Branch, "", tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
+                        Icon(Icons.Default.AccountTree, "", tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
                         Spacer(Modifier.width(8.dp))
                         Text(state.currentBranch, fontWeight = FontWeight.Bold, fontSize = 16.sp)
                     }
@@ -137,7 +137,7 @@ private fun BranchesTab(state: GitState, viewModel: GitViewModel) {
         items(state.branches) { branch ->
             Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
                 Icon(
-                    Icons.Default.Branch,
+                    Icons.Default.AccountTree,
                     "",
                     tint = if (branch == state.currentBranch) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(20.dp)

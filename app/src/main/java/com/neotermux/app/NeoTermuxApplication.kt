@@ -19,8 +19,8 @@ class NeoTermuxApplication : Application(), Configuration.Provider {
         createNotificationChannels()
     }
 
-    override val workManagerConfiguration: Configuration
-        get() = Configuration.Builder()
+    override fun getWorkManagerConfiguration(): Configuration =
+        Configuration.Builder()
             .setWorkerFactory(workerFactory)
             .setMinimumLoggingLevel(android.util.Log.INFO)
             .build()
