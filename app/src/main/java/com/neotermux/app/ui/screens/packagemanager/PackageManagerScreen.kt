@@ -115,7 +115,7 @@ private fun UpdatesTab(state: PackageManagerState, viewModel: PackageManagerView
                     Row(modifier = Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(pkg.name, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                            Text("${pkg.version} -> ${pkg.latestVersion}", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text("${pkg.version} -> ${pkg.latest}", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                         Button(onClick = { viewModel.updatePackage(pkg.name) }, contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp)) {
                             Text("Update", fontSize = 12.sp)

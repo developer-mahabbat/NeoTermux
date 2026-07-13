@@ -85,9 +85,9 @@ fun FileManagerScreen(
                 modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(horizontal = 8.dp, vertical = 2.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                state.pathSegments.forEachIndexed { index, segment ->
+                state.currentSegments.forEachIndexed { index, segment ->
                     TextButton(
-                        onClick = { viewModel.navigateTo(index) },
+                        onClick = { viewModel.navigateToSegment(index) },
                         contentPadding = PaddingValues(horizontal = 4.dp, vertical = 0.dp),
                         modifier = Modifier.height(28.dp)
                     ) {

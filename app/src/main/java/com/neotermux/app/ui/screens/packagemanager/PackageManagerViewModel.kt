@@ -47,9 +47,9 @@ class PackageManagerViewModel @Inject constructor() : ViewModel() {
         }
         _state.value = _state.value.copy(
             searchResults = listOf(
-                PackageInfo("nodejs", "22.11.0", "22.11.0", "JavaScript runtime", false),
-                PackageInfo("rust", "1.82.0", "1.82.0", "Rust programming language", false),
-                PackageInfo("go", "1.23.3", "1.23.3", "Go programming language", false)
+                PackageInfo("nodejs", "22.11.0", "22.11.0", "JavaScript runtime", hasUpdate = false),
+                PackageInfo("rust", "1.82.0", "1.82.0", "Rust programming language", hasUpdate = false),
+                PackageInfo("go", "1.23.3", "1.23.3", "Go programming language", hasUpdate = false)
             ).filter { it.name.contains(query, ignoreCase = true) }
         )
     }

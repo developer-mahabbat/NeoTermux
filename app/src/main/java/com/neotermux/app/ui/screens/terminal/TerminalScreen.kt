@@ -9,6 +9,8 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -21,6 +23,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.TextStyle
@@ -239,30 +242,24 @@ fun TerminalScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text("$ ", color = Color(0xFF4EC9B0), fontSize = (fontSize).sp)
-                        BasicTextField(
-                            value = viewModel.inputText,
-                            onValueChange = { viewModel.inputText = it },
+                        TextField(
+                            value = viewModel.inputText.value,
+                            onValueChange = { viewModel.inputText.value = it },
                             textStyle = TextStyle(
                                 color = Color(0xFFD4D4D4),
                                 fontSize = fontSize.sp,
                                 fontFamily = FontFamily.Monospace
                             ),
-                            cursorBrush = SolidColor(Color(0xFF8AB4F8)),
                             modifier = Modifier.weight(1f),
                             singleLine = true,
-                            decorationBox = { innerTextField ->
-                                Box {
-                                    if (viewModel.inputText.text.isEmpty()) {
-                                        Text(
-                                            "Type a command...",
-                                            color = Color(0xFF5A5A5A),
-                                            fontSize = fontSize.sp,
-                                            fontFamily = FontFamily.Monospace
-                                        )
-                                    }
-                                    innerTextField()
-                                }
-                            }
+                            placeholder = { Text("Type a command...", color = Color(0xFF5A5A5A), fontSize = fontSize.sp, fontFamily = FontFamily.Monospace) },
+                            colors = TextFieldDefaults.colors(
+                                focusedContainerColor = Color.Transparent,
+                                unfocusedContainerColor = Color.Transparent,
+                                focusedIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent,
+                                cursorColor = Color(0xFF8AB4F8)
+                            )
                         )
                         IconButton(onClick = { viewModel.executeCommand() }, modifier = Modifier.size(32.dp)) {
                             Icon(Icons.Default.Send, "Execute", tint = Color(0xFF4EC9B0), modifier = Modifier.size(18.dp))
@@ -308,7 +305,7 @@ fun NavigationDrawerItems(onNavigateTo: (String) -> Unit, onDismiss: () -> Unit)
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(vertical = 16.dp)
         )
-        Divider(color = Color(0xFF37373D))
+        HorizontalDivider(color = Color(0xFF37373D))
         Spacer(Modifier.height(8.dp))
         DrawerItem(Icons.Default.Terminal, "Terminal", "terminal") { onNavigateTo("terminal"); onDismiss() }
         DrawerItem(Icons.Default.FolderOpen, "File Manager", "filemanager") { onNavigateTo("filemanager") }

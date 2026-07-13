@@ -35,7 +35,6 @@ class TerminalViewModel @Inject constructor() : ViewModel() {
     val showExtraKeys: StateFlow<Boolean> = _showExtraKeys.asStateFlow()
 
     var inputText = mutableStateOf(TextFieldValue(""))
-        private set
 
     private var sessionIdCounter = 1
 

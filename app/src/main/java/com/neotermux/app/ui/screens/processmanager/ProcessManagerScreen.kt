@@ -140,11 +140,3 @@ data class ProcessManagerState(
 private val <T> List<T>.randomValue: T get() = this[randomIndex()]
 private fun randomIndex(): Int = (Math.random() * 10).toInt()
 
-@HiltViewModel
-class ProcessManagerViewModel @Inject constructor() : ViewModel() {
-    private val _state = MutableStateFlow(ProcessManagerState())
-    val state: StateFlow<ProcessManagerState> = _state.asStateFlow()
-
-    fun killProcess(pid: Int) {}
-    fun refresh() {}
-}
