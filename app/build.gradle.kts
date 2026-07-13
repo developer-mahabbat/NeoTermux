@@ -65,6 +65,7 @@ android {
             excludes += "/META-INF/DEPENDENCIES"
             excludes += "/META-INF/INDEX.LIST"
             excludes += "/OSGI-INF/**"
+            excludes += "/META-INF/versions/9/OSGI-INF/**"
         }
     }
 
